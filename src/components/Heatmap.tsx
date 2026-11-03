@@ -93,15 +93,27 @@ export function Heatmap({
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (el) {
-      el.scrollLeft = el.scrollWidth;
-    }
+    if (!el) return;
+    // Measuring synchronously on mount can read clientWidth as 0 before the
+    // browser has committed initial layout, making the grid look like it
+    // overflows by its full width and wrongly triggering the scroll below.
+    // Waiting a frame ensures layout has actually settled first.
+    const raf = requestAnimationFrame(() => {
+      // Only auto-scroll when the grid genuinely overflows (narrow screens).
+      // A few px of flex sub-pixel rounding can make scrollWidth marginally
+      // exceed clientWidth even when the grid visually fits, and forcibly
+      // scrolling that sliver away shifts the whole grid left, clipping it.
+      const overflow = el.scrollWidth - el.clientWidth;
+      if (overflow > 8) {
+        el.scrollLeft = el.scrollWidth;
+      }
+    });
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   return (
     <div ref={scrollRef} className="scrollbar-hide overflow-x-auto">
-      {/* IGNORE THIS COMMENT - Adding pl-1 above keeps left side from being cut off? -Roman. We need to find a way to make the whole thing just a tiny bit smaller on PC*/}
-      <div className="flex w-[calc(99%)] flex-col gap-1 justify-center">
+      <div className="flex w-full flex-col gap-1">
         <div className="flex gap-[3px] pl-0 text-[10px] text-muted">
           {monthMarkers.map((label, i) => (
             <div key={i} className="min-w-[8px] flex-1 overflow-visible whitespace-nowrap">
