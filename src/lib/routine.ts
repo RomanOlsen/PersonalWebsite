@@ -8,7 +8,7 @@ interface RoutineRow {
   isMorning: boolean | null;
 }
 
-const START_DATE = "2026-09-17";
+const WEEKS = 53;
 
 export interface RoutineHeatmaps {
   morning: HabitDay[];
@@ -16,13 +16,12 @@ export interface RoutineHeatmaps {
   error: boolean;
 }
 
-function buildDateWindow(): string[] {
-  const start = parseLocalDate(START_DATE);
+function buildDateWindow(weeks: number): string[] {
   const anchor = parseLocalDate(toBoiseDateString(new Date()));
-
+  const totalDays = weeks * 7;
   const dates: string[] = [];
-  for (let cursor = start; cursor <= anchor; cursor = addDays(cursor, 1)) {
-    dates.push(formatLocalDate(cursor));
+  for (let i = totalDays - 1; i >= 0; i--) {
+    dates.push(formatLocalDate(addDays(anchor, -i)));
   }
   return dates;
 }
@@ -38,12 +37,13 @@ function buildGrid(
 }
 
 export async function fetchRoutineHeatmaps(): Promise<RoutineHeatmaps> {
-  const dates = buildDateWindow();
+  const dates = buildDateWindow(WEEKS);
+  const windowStart = dates[0];
 
   const { data, error } = await supabase
     .from("routine")
     .select("date, isLevel1, isMorning")
-    .gte("date", START_DATE);
+    .gte("date", windowStart);
 
   if (error || !data) {
     const empty = buildGrid(dates, new Map());
