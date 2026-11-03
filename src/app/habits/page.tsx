@@ -25,7 +25,7 @@ export default function HabitsPage() {
           return (
             <div
               key={habit.id}
-              className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5"
+              className="flex min-w-0 flex-col gap-4 rounded-xl border border-border bg-surface p-5"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div>

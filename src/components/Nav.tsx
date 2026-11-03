@@ -8,15 +8,15 @@ export function Nav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-6 py-4">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md">
+      <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border px-6 py-4">
         <Link
           href="/"
           className="shrink-0 whitespace-nowrap text-sm font-medium tracking-tight"
         >
           {siteConfig.name}
         </Link>
-        <nav className="flex items-center gap-1">
+        <nav className="flex flex-wrap items-center gap-1">
           {siteConfig.nav.map((item) => {
             const isActive =
               item.href === "/"

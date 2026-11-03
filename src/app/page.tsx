@@ -5,10 +5,10 @@ export default function Home() {
     <div className="flex flex-col gap-12">
       <section className="flex flex-col gap-4">
         <h1 className="text-3xl font-semibold tracking-tight">
-          hi! i'm roman.
+          hi! i&apos;m roman.
         </h1>
         <p className="max-w-xl text-base leading-7 text-muted">
-          I'm a 21 y/o app founder, online university student, and writer. I build software with tangible solutions. AuDHD. video game ost enthusiast.
+          I&apos;m a 21 y/o app founder, online university student, and writer. I build software with tangible solutions. AuDHD. video game ost enthusiast.
         </p>
       </section>
 
