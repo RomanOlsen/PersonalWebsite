@@ -40,6 +40,15 @@ body {
   overflow-x: hidden;
 }
 
+/* Standard-density displays (most external monitors) render the same CSS
+   pixel sizes physically smaller than high-DPI laptop screens. Scale the
+   rem base up on those so the site doesn't read as undersized. */
+@media (max-resolution: 1.5dppx) {
+  html {
+    font-size: 125%;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
