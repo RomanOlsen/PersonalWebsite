@@ -100,7 +100,8 @@ export function Heatmap({
 
   return (
     <div ref={scrollRef} className="scrollbar-hide overflow-x-auto">
-      <div className="flex w-full flex-col gap-1">
+      {/* IGNORE THIS COMMENT - Adding pl-1 above keeps left side from being cut off? -Roman. We need to find a way to make the whole thing just a tiny bit smaller on PC*/}
+      <div className="flex w-[calc(99%)] flex-col gap-1 justify-center">
         <div className="flex gap-[3px] pl-0 text-[10px] text-muted">
           {monthMarkers.map((label, i) => (
             <div key={i} className="min-w-[8px] flex-1 overflow-visible whitespace-nowrap">
