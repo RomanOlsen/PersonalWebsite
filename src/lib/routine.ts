@@ -18,9 +18,10 @@ export interface RoutineHeatmaps {
 
 function buildDateWindow(weeks: number): string[] {
   const anchor = parseLocalDate(toBoiseDateString(new Date()));
-  const naiveStart = addDays(anchor, -(weeks * 7 - 1));
-  // Align to the preceding Sunday so the first column is always a full week.
-  const start = addDays(naiveStart, -naiveStart.getDay());
+  const currentWeekStart = addDays(anchor, -anchor.getDay());
+  // Start exactly `weeks` Sunday-aligned columns back, so the window is
+  // always `weeks` full columns wide (the last one partial, ending today).
+  const start = addDays(currentWeekStart, -(weeks - 1) * 7);
 
   const dates: string[] = [];
   for (let cursor = start; cursor <= anchor; cursor = addDays(cursor, 1)) {
