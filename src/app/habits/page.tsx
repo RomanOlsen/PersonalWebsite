@@ -1,24 +1,26 @@
-import { Heatmap } from "@/components/Heatmap";
-import {
-  currentStreak,
-  generateMockHabitData,
-  habits,
-  totalCompletions,
-} from "@/lib/habits";
+import { Heatmap, HeatmapLegend } from "@/components/Heatmap";
+import { currentStreak, habits, totalCompletions } from "@/lib/habits";
+import { fetchRoutineHeatmaps } from "@/lib/routine";
 
-export default function HabitsPage() {
+export default async function HabitsPage() {
+  const { morning, night, error } = await fetchRoutineHeatmaps();
+  const daysByHabit = { morning, night };
+
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold tracking-tight">Habits</h1>
-        <p className="text-sm text-muted">
-          Daily tracking, visualized. Data shown here is a mock placeholder.
-        </p>
+        <p className="text-sm text-muted">Daily tracking, visualized.</p>
+        {error && (
+          <p className="text-sm text-amber-600 dark:text-amber-500">
+            Couldn&apos;t load live data right now — showing an empty grid.
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col gap-8">
         {habits.map((habit) => {
-          const days = generateMockHabitData(habit);
+          const days = daysByHabit[habit.id];
           const streak = currentStreak(days);
           const total = totalCompletions(days);
 
@@ -38,6 +40,7 @@ export default function HabitsPage() {
                 </div>
               </div>
               <Heatmap days={days} color={habit.color} />
+              <HeatmapLegend color={habit.color} />
             </div>
           );
         })}

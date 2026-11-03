@@ -11,6 +11,11 @@ const MONTH_LABELS = [
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
+const LEVEL_ALPHA: Record<1 | 2, number> = {
+  1: 0.45,
+  2: 1,
+};
+
 function buildWeeks(days: HabitDay[]): Cell[][] {
   if (days.length === 0) return [];
 
@@ -39,9 +44,16 @@ function hexToRgba(hex: string, alpha: number): string {
 }
 
 function cellColor(value: number, accent: string): string {
-  if (value <= 0) return "var(--border)";
-  const alpha = value === 1 ? 0.35 : value === 2 ? 0.65 : 1;
-  return hexToRgba(accent, alpha);
+  if (value === 1 || value === 2) {
+    return hexToRgba(accent, LEVEL_ALPHA[value]);
+  }
+  return "var(--border)";
+}
+
+function cellLabel(value: number): string {
+  if (value === 2) return "Level 2";
+  if (value === 1) return "Level 1";
+  return "no entry";
 }
 
 const MIN_WEEKS_BETWEEN_LABELS = 3;
@@ -94,9 +106,7 @@ export function Heatmap({
                   key={dayIndex}
                   title={
                     cell.date
-                      ? `${formatDate(cell.date)} — ${
-                          cell.value > 0 ? "done" : "not done"
-                        }`
+                      ? `${formatDate(cell.date)} — ${cellLabel(cell.value)}`
                       : undefined
                   }
                   className="h-[11px] w-[11px] shrink-0 rounded-[2px]"
@@ -110,6 +120,22 @@ export function Heatmap({
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+export function HeatmapLegend({ color }: { color: string }) {
+  return (
+    <div className="flex items-center gap-3 text-xs text-muted">
+      {([1, 2] as const).map((level) => (
+        <span key={level} className="flex items-center gap-1.5">
+          <span
+            className="h-[11px] w-[11px] rounded-[2px]"
+            style={{ backgroundColor: hexToRgba(color, LEVEL_ALPHA[level]) }}
+          />
+          Level {level}
+        </span>
+      ))}
     </div>
   );
 }
