@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import type { HabitDay } from "@/lib/habits";
 import { formatDate, parseLocalDate } from "@/lib/date";
 
@@ -86,20 +89,31 @@ export function Heatmap({
 }) {
   const weeks = buildWeeks(days);
   const monthMarkers = buildMonthMarkers(weeks);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) {
+      el.scrollLeft = el.scrollWidth;
+    }
+  }, []);
 
   return (
-    <div className="overflow-x-auto">
-      <div className="inline-flex flex-col gap-1">
+    <div ref={scrollRef} className="scrollbar-hide overflow-x-auto">
+      <div className="flex w-full flex-col gap-1">
         <div className="flex gap-[3px] pl-0 text-[10px] text-muted">
           {monthMarkers.map((label, i) => (
-            <div key={i} className="w-[11px] shrink-0">
+            <div key={i} className="min-w-[8px] flex-1 overflow-visible whitespace-nowrap">
               {label}
             </div>
           ))}
         </div>
         <div className="flex gap-[3px]">
           {weeks.map((week, weekIndex) => (
-            <div key={weekIndex} className="flex flex-col gap-[3px]">
+            <div
+              key={weekIndex}
+              className="flex min-w-[8px] flex-1 flex-col gap-[3px]"
+            >
               {week.map((cell, dayIndex) => (
                 <div
                   key={dayIndex}
@@ -108,7 +122,7 @@ export function Heatmap({
                       ? `${formatDate(cell.date)} — ${cellLabel(cell.value)}`
                       : undefined
                   }
-                  className="h-[11px] w-[11px] shrink-0 rounded-[2px]"
+                  className="aspect-square w-full rounded-[2px]"
                   style={{
                     backgroundColor:
                       cell.value === -1 ? "transparent" : cellColor(cell.value, color),
