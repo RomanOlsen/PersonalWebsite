@@ -73,7 +73,6 @@ function buildMonthMarkers(weeks: Cell[][]): (string | null)[] {
       lastLabelIndex = weekIndex;
       return MONTH_LABELS[month];
     }
-    lastMonth = month;
     return null;
   });
 }
