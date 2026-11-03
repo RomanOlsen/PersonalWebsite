@@ -1,0 +1,115 @@
+import type { HabitDay } from "@/lib/habits";
+import { formatDate, parseLocalDate } from "@/lib/date";
+
+interface Cell {
+  date: string | null;
+  value: number;
+}
+
+const MONTH_LABELS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+function buildWeeks(days: HabitDay[]): Cell[][] {
+  if (days.length === 0) return [];
+
+  const leadingEmpty = parseLocalDate(days[0].date).getDay();
+  const cells: Cell[] = [
+    ...Array.from({ length: leadingEmpty }, () => ({ date: null, value: -1 })),
+    ...days.map((day) => ({ date: day.date, value: day.value })),
+  ];
+  while (cells.length % 7 !== 0) {
+    cells.push({ date: null, value: -1 });
+  }
+
+  const weeks: Cell[][] = [];
+  for (let i = 0; i < cells.length; i += 7) {
+    weeks.push(cells.slice(i, i + 7));
+  }
+  return weeks;
+}
+
+function hexToRgba(hex: string, alpha: number): string {
+  const normalized = hex.replace("#", "");
+  const r = parseInt(normalized.slice(0, 2), 16);
+  const g = parseInt(normalized.slice(2, 4), 16);
+  const b = parseInt(normalized.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function cellColor(value: number, accent: string): string {
+  if (value <= 0) return "var(--border)";
+  const alpha = value === 1 ? 0.35 : value === 2 ? 0.65 : 1;
+  return hexToRgba(accent, alpha);
+}
+
+const MIN_WEEKS_BETWEEN_LABELS = 3;
+
+function buildMonthMarkers(weeks: Cell[][]): (string | null)[] {
+  let lastMonth = -1;
+  let lastLabelIndex = -Infinity;
+  return weeks.map((week, weekIndex) => {
+    const firstRealCell = week.find((cell) => cell.date);
+    if (!firstRealCell?.date) return null;
+    const month = parseLocalDate(firstRealCell.date).getMonth();
+    if (
+      month !== lastMonth &&
+      weekIndex - lastLabelIndex >= MIN_WEEKS_BETWEEN_LABELS
+    ) {
+      lastMonth = month;
+      lastLabelIndex = weekIndex;
+      return MONTH_LABELS[month];
+    }
+    lastMonth = month;
+    return null;
+  });
+}
+
+export function Heatmap({
+  days,
+  color,
+}: {
+  days: HabitDay[];
+  color: string;
+}) {
+  const weeks = buildWeeks(days);
+  const monthMarkers = buildMonthMarkers(weeks);
+
+  return (
+    <div className="overflow-x-auto">
+      <div className="inline-flex flex-col gap-1">
+        <div className="flex gap-[3px] pl-0 text-[10px] text-muted">
+          {monthMarkers.map((label, i) => (
+            <div key={i} className="w-[11px] shrink-0">
+              {label}
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-[3px]">
+          {weeks.map((week, weekIndex) => (
+            <div key={weekIndex} className="flex flex-col gap-[3px]">
+              {week.map((cell, dayIndex) => (
+                <div
+                  key={dayIndex}
+                  title={
+                    cell.date
+                      ? `${formatDate(cell.date)} — ${
+                          cell.value > 0 ? "done" : "not done"
+                        }`
+                      : undefined
+                  }
+                  className="h-[11px] w-[11px] shrink-0 rounded-[2px]"
+                  style={{
+                    backgroundColor:
+                      cell.value === -1 ? "transparent" : cellColor(cell.value, color),
+                  }}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
