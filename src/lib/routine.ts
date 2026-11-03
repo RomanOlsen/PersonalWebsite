@@ -1,19 +1,14 @@
 import type { HabitDay } from "@/lib/habits";
-import {
-  addDays,
-  formatLocalDate,
-  parseLocalDate,
-  toBoiseDateString,
-} from "@/lib/date";
+import { addDays, formatLocalDate, parseLocalDate, toBoiseDateString } from "@/lib/date";
 import { supabase } from "@/lib/supabase";
 
 interface RoutineRow {
-  created_at: string;
+  date: string;
   isLevel1: boolean | null;
   isMorning: boolean | null;
 }
 
-const WEEKS = 53;
+const START_DATE = "2026-09-17";
 
 export interface RoutineHeatmaps {
   morning: HabitDay[];
@@ -21,12 +16,13 @@ export interface RoutineHeatmaps {
   error: boolean;
 }
 
-function buildDateWindow(weeks: number): string[] {
+function buildDateWindow(): string[] {
+  const start = parseLocalDate(START_DATE);
   const anchor = parseLocalDate(toBoiseDateString(new Date()));
-  const totalDays = weeks * 7;
+
   const dates: string[] = [];
-  for (let i = totalDays - 1; i >= 0; i--) {
-    dates.push(formatLocalDate(addDays(anchor, -i)));
+  for (let cursor = start; cursor <= anchor; cursor = addDays(cursor, 1)) {
+    dates.push(formatLocalDate(cursor));
   }
   return dates;
 }
@@ -42,13 +38,12 @@ function buildGrid(
 }
 
 export async function fetchRoutineHeatmaps(): Promise<RoutineHeatmaps> {
-  const dates = buildDateWindow(WEEKS);
-  const windowStart = dates[0];
+  const dates = buildDateWindow();
 
   const { data, error } = await supabase
     .from("routine")
-    .select("created_at, isLevel1, isMorning")
-    .gte("created_at", windowStart);
+    .select("date, isLevel1, isMorning")
+    .gte("date", START_DATE);
 
   if (error || !data) {
     const empty = buildGrid(dates, new Map());
@@ -61,13 +56,12 @@ export async function fetchRoutineHeatmaps(): Promise<RoutineHeatmaps> {
   for (const row of data as RoutineRow[]) {
     if (row.isMorning === null) continue;
 
-    const dateStr = toBoiseDateString(new Date(row.created_at));
     const level: 1 | 2 = row.isLevel1 ? 1 : 2;
     const bucket = row.isMorning ? morningLevels : nightLevels;
 
-    const existing = bucket.get(dateStr);
+    const existing = bucket.get(row.date);
     if (!existing || level > existing) {
-      bucket.set(dateStr, level);
+      bucket.set(row.date, level);
     }
   }
 
