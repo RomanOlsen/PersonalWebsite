@@ -10,7 +10,7 @@ export default async function HabitsPage() {
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold tracking-tight">Habits</h1>
-        <p className="text-sm text-muted">Daily tracking, visualized.</p>
+        <p className="text-sm text-muted">personal archive and accountability</p>
         {error && (
           <p className="text-sm text-amber-600 dark:text-amber-500">
             Couldn&apos;t load live data right now — showing an empty grid.

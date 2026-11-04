@@ -6,8 +6,13 @@ export interface App {
 
 export const apps: App[] = [
   {
-    name: "Habit Heatmap",
-    description: "The habit tracker on this very site.",
-    href: "/habits",
+    name: "GeoScroll",
+    description: "Unlock apps at your chosen location",
+    href: "https://geoscroll.app",
+  },
+  {
+    name: "LiftTribe",
+    description: "gym habit tracker w/ group features. first ios app",
+    href: "https://apps.apple.com/us/app/lifttribe/id6789966225",
   },
 ];

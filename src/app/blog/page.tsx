@@ -7,7 +7,7 @@ export default function BlogPage() {
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold tracking-tight">Blog</h1>
-        <p className="text-sm text-muted">Placeholder posts for now.</p>
+        <p className="text-sm text-muted">sharing my thoughts</p>
       </div>
 
       <div className="flex flex-col divide-y divide-border">

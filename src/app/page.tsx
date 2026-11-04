@@ -16,17 +16,17 @@ export default function Home() {
         <HomeCard
           href="/habits"
           title="Habits"
-          description="Daily habit heatmaps."
+          description="personal archive and accountability"
         />
         <HomeCard
           href="/blog"
           title="Blog"
-          description="Notes and writing."
+          description="sharing my thoughts"
         />
         <HomeCard
           href="/apps"
           title="Apps"
-          description="Things I've built."
+          description="iOS"
         />
       </section>
     </div>

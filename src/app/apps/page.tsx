@@ -6,7 +6,7 @@ export default function AppsPage() {
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold tracking-tight">Apps</h1>
-        <p className="text-sm text-muted">Small things I&apos;ve built.</p>
+        <p className="text-sm text-muted">iOS</p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
